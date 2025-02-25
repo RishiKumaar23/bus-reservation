@@ -31,7 +31,6 @@ public class Seat {
     @Column(name = "no_of_other_seats")
     private Integer noOfOtherSeats;
 
-    @Column(name = "seat_capacity")
-    private Integer seatCapacity;
+
 
 }

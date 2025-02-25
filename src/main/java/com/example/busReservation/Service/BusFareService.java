@@ -19,6 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BusFareService {
     private final BusFareRepository busFareRepository;
+    private final MessageProperties messageProperties;
 
     private BusFareDto entityToDto(BusFare busFare){
         return BusFareDto.builder().id(busFare.getId())
@@ -102,7 +103,7 @@ public class BusFareService {
         return busFare.map(this::entityToDto).orElse(null);
     }
     public void deleteByFareId(Integer id){
-        BusFare busFare=busFareRepository.findById(id).orElseThrow(()->new RuntimeException("id not found for delete"));
+        BusFare busFare=busFareRepository.findById(id).orElseThrow(()->new RuntimeException(messageProperties.message("bus.fare.delete")));
         busFareRepository.delete(busFare);
     }
 }

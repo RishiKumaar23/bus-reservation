@@ -18,4 +18,5 @@ public class BusDetailsDto {
     private Integer seatCapacity;
     private Route route;
     private BusOwner owner;
+
 }

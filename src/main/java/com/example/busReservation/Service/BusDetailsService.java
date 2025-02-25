@@ -25,9 +25,9 @@ public class BusDetailsService {
                 .route(busDetails.getRoute())
                 .departureTime(busDetails.getDepartureTime())
                 .arrivalTime(busDetails.getArrivalTime())
+                .seatCapacity(busDetails.getSeatCapacity())
                 .build();
     }
-
 
 
     public void saveBusDetails(BusDetailsDto busDetailsDto) {
@@ -43,6 +43,7 @@ public class BusDetailsService {
                 .busType(BusType.valueOf(busDetailsDto.getBusType()))
                 .route(busDetailsDto.getRoute())
                 .owner(busDetailsDto.getOwner())
+                .seatCapacity(busDetailsDto.getSeatCapacity())
                 .build();
 
 
@@ -61,16 +62,16 @@ public class BusDetailsService {
     }
 
     public List<BusDetailsDto> getAllBusDetails() {
-    return busRepository.findAll().stream().map(this::entityToDto).toList();
+        return busRepository.findAll().stream().map(this::entityToDto).toList();
     }
 
     public BusDetailsDto getBusById(Integer id) {
-        Optional<BusDetails> busDetails= busRepository.findByBusId(id);
+        Optional<BusDetails> busDetails = busRepository.findByBusId(id);
         return busDetails.map(this::entityToDto).orElse(null);
     }
 
-    public void deleteById(Integer id){
-        BusDetails busDetails=busRepository.findByBusId(id).orElseThrow(()->new RuntimeException("id  is not found for delete"));
+    public void deleteById(Integer id) {
+        BusDetails busDetails = busRepository.findByBusId(id).orElseThrow(() -> new RuntimeException("id  is not found for delete"));
         busRepository.delete(busDetails);
     }
 }

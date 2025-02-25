@@ -45,5 +45,7 @@ public class BusDetails {
     @JoinColumn(name = "owner_id")
     private BusOwner owner;
 
+    @Column(name="seat_capacity")
+    private Integer seatCapacity;
 }
 

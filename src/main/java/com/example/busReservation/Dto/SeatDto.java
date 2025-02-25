@@ -11,7 +11,5 @@ public class SeatDto {
     private BusDetails bus;
     private Integer noOfWindowSeats;
     private Integer noOfOtherSeats;
-    private Integer seatCapacity;
-
 
 }

@@ -17,11 +17,12 @@ public class SeatService {
       public void saveAndUpdateSeats(SeatDto seatDto) {
 
             Integer totalSeats= seatDto.getNoOfWindowSeats() + seatDto.getNoOfOtherSeats();
-
+           if(!totalSeats.equals(seatDto.getBus().getSeatCapacity())){
+                 throw new RuntimeException("Seat count mismatch: The number of selected seats does not match the total seat capacity");
+           }
             Seat seat=Seat.builder().noOfWindowSeats(seatDto.getNoOfWindowSeats())
                     .noOfOtherSeats(seatDto.getNoOfOtherSeats())
                     .busDetails(seatDto.getBus())
-                    .seatCapacity(totalSeats)
                     .build();
             if(seatDto.getId()!=null){
                   seatRepository.findBySeatId(seatDto.getId()).orElseThrow(()->new RuntimeException("seat id not found"));
