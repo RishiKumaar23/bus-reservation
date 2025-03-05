@@ -16,7 +16,7 @@ public class BusReservationApplication {
 	public MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:Messages/Message");
-		messageSource.setCacheSeconds(10); //reload messages every 10 seconds
+		messageSource.setCacheSeconds(10);
 		return messageSource;
 }
 }

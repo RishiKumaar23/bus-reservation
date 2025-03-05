@@ -1,7 +1,6 @@
 package com.example.busReservation.Dto;
 
 import com.example.busReservation.Entity.Country;
-import com.example.busReservation.Enum.Status;
 import lombok.Builder;
 import lombok.Data;
 

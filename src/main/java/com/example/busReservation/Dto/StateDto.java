@@ -10,6 +10,5 @@ import java.util.List;
 public class StateDto {
     private Integer id;
     private String stateName;
-    private Integer countryId;
     private List<CityDto> city;
 }

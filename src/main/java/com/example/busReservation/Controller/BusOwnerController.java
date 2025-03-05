@@ -23,6 +23,7 @@ public class BusOwnerController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping("/getAll")
     private ResponseEntity<?> getAllOwners() {
         try {

@@ -24,20 +24,8 @@ public class BusFare {
         private Integer id;
 
         @ManyToOne
-        @JoinColumn(name = "bus_id")
-        private BusDetails busDetails;
-
-        @ManyToOne
-        @JoinColumn(name = "route_id")
-        private Route route;
-
-        @Enumerated(EnumType.STRING)
-        @Column(name = "seat_type")
-        private SeatType seatType;
-
-        @Enumerated(EnumType.STRING)
-        @Column(name = "seat_category")
-        private SeatCategory seatCategory;
+        @JoinColumn(name = "seat_id")
+        private Seat seat;
 
         @Column(name = "fare")
         @Min(value = 0, message = "Fare must be at least 0")

@@ -1,6 +1,8 @@
 package com.example.busReservation.Entity;
 
 import com.example.busReservation.Enum.BusType;
+import com.example.busReservation.Enum.SeatCategory;
+import com.example.busReservation.Enum.SeatType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,21 +33,20 @@ public class BusDetails {
     @Column(name = "bus_type")
     private BusType busType;
 
-    @Column(name = "departure_time")
-    private LocalTime departureTime;
-
-    @Column(name = "arrival_time")
-    private LocalTime arrivalTime;
-
-    @ManyToOne
-    @JoinColumn(name = "route_id")
-    private Route route;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "seat_type")
+    private SeatType seatType;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private BusOwner owner;
 
-    @Column(name="seat_capacity")
-    private Integer seatCapacity;
+    @OneToMany(mappedBy = "busDetails",cascade = CascadeType.ALL)
+    private List<Seat> seat;
+
+    @OneToMany(mappedBy = "busDetails",cascade = CascadeType.ALL)
+    private List<BusSchedules> busSchedules;
+
+
 }
 

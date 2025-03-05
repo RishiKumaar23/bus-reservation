@@ -3,6 +3,7 @@ package com.example.busReservation.Service;
 import com.example.busReservation.Dto.BusDetailsDto;
 import com.example.busReservation.Entity.BusDetails;
 import com.example.busReservation.Enum.BusType;
+import com.example.busReservation.Enum.SeatType;
 import com.example.busReservation.Repository.BusDetailsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,8 @@ public class BusDetailsService {
                 .id(busDetails.getId())
                 .busRegNo(busDetails.getBusRegNo())
                 .busType(busDetails.getBusType().name())
+                .seatType(busDetails.getSeatType().name())
                 .owner(busDetails.getOwner())
-                .route(busDetails.getRoute())
-                .departureTime(busDetails.getDepartureTime())
-                .arrivalTime(busDetails.getArrivalTime())
-                .seatCapacity(busDetails.getSeatCapacity())
                 .build();
     }
 
@@ -37,23 +35,13 @@ public class BusDetailsService {
             throw new RuntimeException("Bus with registration number " + busDetailsDto.getBusRegNo() + " already exists.");
         }
 
-        // Save bus details
         BusDetails busDetails = BusDetails.builder()
                 .busRegNo(busDetailsDto.getBusRegNo())
                 .busType(BusType.valueOf(busDetailsDto.getBusType()))
-                .route(busDetailsDto.getRoute())
+                .seatType(SeatType.valueOf(busDetailsDto.getSeatType()))
                 .owner(busDetailsDto.getOwner())
-                .seatCapacity(busDetailsDto.getSeatCapacity())
                 .build();
 
-
-        if (busDetailsDto.getDepartureTime().isBefore(busDetailsDto.getArrivalTime())) {
-            busDetails.setDepartureTime(busDetailsDto.getDepartureTime());
-            busDetails.setArrivalTime(busDetailsDto.getArrivalTime());
-        } else {
-            throw new RuntimeException("arrival time  is after the departure time ");
-        }
-        ;
         if (busDetailsDto.getId() != null) {
             busRepository.findByBusId(busDetailsDto.getId()).orElseThrow(() -> new RuntimeException("Bus Not found"));
             busDetails.setId(busDetailsDto.getId());

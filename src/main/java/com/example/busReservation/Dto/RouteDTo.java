@@ -16,4 +16,5 @@ public class RouteDTo {
     private City destinationCity;
     private Integer distanceKm;
     private String status ;
+    private Double travelTime;
 }

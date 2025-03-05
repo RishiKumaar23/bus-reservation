@@ -21,9 +21,6 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
-    private List<BusDetails> busDetails;
-
     @ManyToOne
     @JoinColumn(name = "source_city_id")
     private City sourceCity;
@@ -35,9 +32,14 @@ public class Route {
     @Column(name = "distance_km")
     private Integer distanceKm;
 
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status = Status.INACTIVE;
+
+    @OneToMany(mappedBy = "route",cascade = CascadeType.ALL)
+    private List<BusSchedules> busSchedules;
+
 }
 
 

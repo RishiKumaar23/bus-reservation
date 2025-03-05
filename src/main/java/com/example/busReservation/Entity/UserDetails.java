@@ -1,14 +1,14 @@
 package com.example.busReservation.Entity;
 
 
-
-
 import com.example.busReservation.Enum.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Entity
 @Data
@@ -42,6 +42,9 @@ public class UserDetails {
 
     @Column(name = "nationality", length = 30)
     private String nationality;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Booking> bookings;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
