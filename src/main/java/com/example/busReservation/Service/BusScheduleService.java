@@ -6,13 +6,13 @@ import com.example.busReservation.Dto.BusSearchDto;
 import com.example.busReservation.Entity.BusDetails;
 import com.example.busReservation.Entity.BusSchedules;
 import com.example.busReservation.Entity.Route;
+import com.example.busReservation.Enum.FilterBy;
 import com.example.busReservation.Repository.BusDetailsRepository;
 import com.example.busReservation.Repository.BusScheduleRepository;
 import com.example.busReservation.Repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,22 +55,25 @@ private final RouteRepository routeRepository;
     }scheduleRepository.save(busSchedules);
     }
 
-//    public List<BusSchedulesDto> availableBuses1(BusSearchDto busSearchDto) {
-//        List<BusSearchBean> scheduleDetails = scheduleRepository.findBuses1(busSearchDto.getSourceCityId(),busSearchDto.getDestinationCityId(), busSearchDto.getTravelDate());
-//        LocalDateTime now = LocalDateTime.now();
-//
-//
-//        return scheduleDetails.stream().map(this::convertTODto).collect(Collectors.toList());
-//    }
     public List<BusSchedulesDto> availableBuses(BusSearchDto busSearchDto) {
+        if ((busSearchDto.getCustomStartTime() != null && busSearchDto.getCustomEndTime() == null) ||
+                (busSearchDto.getCustomStartTime() == null && busSearchDto.getCustomEndTime() != null)) {
+            throw new IllegalArgumentException("Both customStartTime and customEndTime must be provided together.");
+        }
         List<BusSearchBean> scheduleDetails = scheduleRepository.findBuses(
                 busSearchDto.getSourceCityId(),
                 busSearchDto.getDestinationCityId(),
                 busSearchDto.getTravelDate(),
                 busSearchDto.getBusType(),
                 busSearchDto.getSeatType(),
-                busSearchDto.getDepartureTimeRange()
+                busSearchDto.getCustomStartTime(),
+                busSearchDto.getCustomEndTime(),
+                busSearchDto.getFilterBy() != null ? busSearchDto.getFilterBy().name() : "DEPARTURE"
         );
+        if (scheduleDetails.isEmpty()) {
+            throw new RuntimeException("No buses available for the selected criteria.");
+        }
         return scheduleDetails.stream().map(this::convertTODto).collect(Collectors.toList());
     }
 }
+

@@ -1,5 +1,6 @@
 package com.example.busReservation.Dto;
 
+import com.example.busReservation.Enum.FilterBy;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -11,6 +12,9 @@ public class BusSearchDto {
     private LocalDate travelDate;
     private String busType;
     private String seatType;
-    private String departureTimeRange;
+    private String customStartTime;
+    private String customEndTime;
+    private FilterBy FilterBy;
+
 }
 
