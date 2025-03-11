@@ -9,14 +9,15 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 @SpringBootApplication
 public class BusReservationApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BusReservationApplication.class, args);
-	}
-	@Bean
-	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasename("classpath:Messages/Message");
-		messageSource.setCacheSeconds(10);
-		return messageSource;
-}
+    public static void main(String[] args) {
+        SpringApplication.run(BusReservationApplication.class, args);
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:Messages/Message");
+        messageSource.setCacheSeconds(10);
+        return messageSource;
+    }
 }

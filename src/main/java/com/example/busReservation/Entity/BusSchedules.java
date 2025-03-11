@@ -40,6 +40,7 @@ public class BusSchedules {
     @JoinColumn(name = "bus_id")
     private BusDetails busDetails;
 
+
     @ManyToOne
     @JoinColumn(name ="route_id")
     private Route route;

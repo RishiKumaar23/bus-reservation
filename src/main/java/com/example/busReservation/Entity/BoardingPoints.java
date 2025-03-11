@@ -6,24 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "state")
-public class State {
+@Table(name = "boarding_points")
+public class BoardingPoints {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Integer id;
-    @Column(name = "state_name")
-    private String stateName;
+    @Column(name = "Boarding_name")
+    private String boardingName;
     @ManyToOne
-    @JoinColumn(name = "country_id")
-    private Country country;
-    @OneToMany(mappedBy = "state",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<City> city;
+    @JoinColumn(name = "city_id")
+    private City city;
+
 }

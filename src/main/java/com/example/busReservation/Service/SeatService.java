@@ -31,7 +31,7 @@ public class SeatService {
                 .seatCapacity(totalSeats)
                 .fare(seatDto.getFare())
                 .booking(seatDto.getBooking())
-                .isBooked(seatDto.isBooked())
+                .isBooked(seatDto.getIsBooked())
                 .build();
 
         if(seatDto.getId()!=null){

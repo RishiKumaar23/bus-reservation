@@ -22,5 +22,5 @@ public class SeatDto {
     private Integer seatCapacity;
     private BigDecimal fare;
     private Booking booking;
-    private boolean isBooked = false;
+    private Boolean isBooked = false;
 }

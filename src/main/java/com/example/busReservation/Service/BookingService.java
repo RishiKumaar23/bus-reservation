@@ -30,7 +30,7 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Bus schedule not found"));
 
         Seat seat = seatRepository.findById(bookingDto.getSeat().getId()).orElseThrow(() -> new RuntimeException("Seat not found"));
-        if (seat.isBooked()) {
+        if (seat.getIsBooked()) {
             throw new RuntimeException("Seat is already booked");
         }
         Booking booking = Booking.builder()
@@ -38,7 +38,7 @@ public class BookingService {
                 .seat(seat)
                 .bookingDate(LocalDate.now())
                 .build();
-        seat.setBooked(true);
+        seat.setIsBooked(true);
         seat.setBooking(booking);
         bookingRepository.save(booking);
         seatRepository.save(seat);

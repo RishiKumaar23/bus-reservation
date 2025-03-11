@@ -37,6 +37,9 @@ public class Route {
     @Column(name = "status")
     private Status status = Status.INACTIVE;
 
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    private List<RouteVariant> routeVariants;
+
     @OneToMany(mappedBy = "route",cascade = CascadeType.ALL)
     private List<BusSchedules> busSchedules;
 

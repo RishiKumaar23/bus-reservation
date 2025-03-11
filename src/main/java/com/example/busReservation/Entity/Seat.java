@@ -32,7 +32,7 @@ public class Seat {
     @Column(name = "other_seat_name")
     private Set<String> otherSeats;
 
-    @Column(name="seat_capacity")
+    @Column(name = "seat_capacity")
     private Integer seatCapacity;
 
     @ManyToOne
@@ -46,7 +46,8 @@ public class Seat {
     @OneToOne(mappedBy = "seat")
     private Booking booking;
 
+    @Builder.Default
     @Column(name = "is_booked")
-    private boolean isBooked = false;
+    private Boolean isBooked = false;
 
 }
