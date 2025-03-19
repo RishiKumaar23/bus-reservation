@@ -1,6 +1,6 @@
 package com.example.busReservation.Controller;
 
-import com.example.busReservation.Dto.BoardingPointDto;
+import com.example.busReservation.Dto.BoardingPointsDto;
 import com.example.busReservation.Service.BoardingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,9 @@ public class BoardingController {
     private final BoardingService boardingService;
 
     @PutMapping("/save")
-    public ResponseEntity<String> createAndUpdateBoarding(@RequestBody List<BoardingPointDto> boardingDtos) {
+    public ResponseEntity<String> createAndUpdateBoarding(@RequestBody List<BoardingPointsDto> boardingDtos) {
         try {
-            for (BoardingPointDto boardingDto : boardingDtos) {
+            for (BoardingPointsDto boardingDto : boardingDtos) {
                 boardingService.createAndUpdateBoarding(boardingDto);
             }
             return ResponseEntity.ok("Boarding points processed successfully");

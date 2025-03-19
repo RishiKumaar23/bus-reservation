@@ -14,11 +14,8 @@ import java.util.List;
 @Builder
 public class RouteDTo {
     private Integer id;
-    private BusDetails busDetails;
-    private City sourceCity;
-    private City destinationCity;
+    private Integer sourceCity;
+    private Integer destinationCity;
     private Integer distanceKm;
     private String status ;
-    private Double travelTime;
-    private List<RouteVariant> routeVariants;
 }

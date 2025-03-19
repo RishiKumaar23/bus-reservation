@@ -1,16 +1,35 @@
 package com.example.busReservation.Dto;
 
-import com.example.busReservation.Entity.PickUpPoints;
-import com.example.busReservation.Entity.Route;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RouteVariantDto {
-    private Integer id;
-    private Route route;
-    private List<PickUpPoints> pickUpPoints;
-    private String variantName;
+    private Integer routeVariantId;
+    private String startBoardingTime;
+    private List<BusRouteDto> busRoutesDto;
+
+//    public class BusRouteDto {
+//        private Integer cityId;
+//        private Integer stopOrder;
+//        private Double fare;
+//        private List<BoardingPointTimeDto> boardingPointsDto;
+//    }
+
+//    public static class BoardingPointTimeDto {
+//        private static Integer boardingPointId;
+//        private static LocalTime boardingTime;
+//
+//    }
+
 }
+
+

@@ -3,6 +3,7 @@ package com.example.busReservation.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -16,13 +17,17 @@ public class RouteVariant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+//    @Column(name = "start_boarding_time")
+//    private LocalTime startBoardingTime;
+
     @ManyToOne
     @JoinColumn(name = "route_id")
     private Route route;
 
     @OneToMany(mappedBy = "routeVariant")
-     private List<PickUpPoints> pickUpPointsList;
+     private List<BusRoutes> busRoutesList;
 
     @Column(name = "variant_name")
     private String variantName;
+
 }

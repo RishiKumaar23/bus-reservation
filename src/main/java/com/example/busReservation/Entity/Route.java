@@ -21,13 +21,11 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "source_city_id")
-    private City sourceCity;
+    @Column(name = "source_city_id")
+    private Integer sourceCity;
 
-    @ManyToOne
-    @JoinColumn(name = "destination_city_id")
-    private City destinationCity;
+    @Column(name = "destination_city_id")
+    private Integer destinationCity;
 
     @Column(name = "distance_km")
     private Integer distanceKm;
@@ -37,10 +35,10 @@ public class Route {
     @Column(name = "status")
     private Status status = Status.INACTIVE;
 
-    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RouteVariant> routeVariants;
 
-    @OneToMany(mappedBy = "route",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "route",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BusSchedules> busSchedules;
 
 }

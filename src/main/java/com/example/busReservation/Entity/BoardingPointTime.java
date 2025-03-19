@@ -6,30 +6,28 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "pickup_points")
-public class PickUpPoints {
+@Table(name = "boarding_point_time")
+public class BoardingPointTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "route_variant_id")
-    private RouteVariant routeVariant;
+    @JoinColumn(name = "bus_route_id")
+    private BusRoutes busRoute;
 
     @ManyToOne
-    @JoinColumn(name = "city_id")
-    private City city;
+    @JoinColumn(name = "boarding_point_id")
+    private BoardingPoints boardingPoint;
 
-    @Column(name = "stop_order")
-    private Integer stopOrder;
-
-    @Column(name = "fare")
-    private Double fare;
-
+    @Column(name = "boarding_time")
+    private LocalTime boardingTime;
 }

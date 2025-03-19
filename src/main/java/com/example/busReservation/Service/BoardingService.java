@@ -1,6 +1,6 @@
 package com.example.busReservation.Service;
 
-import com.example.busReservation.Dto.BoardingPointDto;
+import com.example.busReservation.Dto.BoardingPointsDto;
 import com.example.busReservation.Entity.BoardingPoints;
 import com.example.busReservation.Entity.City;
 import com.example.busReservation.Repository.BoardingRepository;
@@ -16,10 +16,7 @@ public class BoardingService {
     private final BoardingRepository boardingRepository;
     private final CityRepository cityRepository;
 
-    public void createAndUpdateBoarding(BoardingPointDto boardingDto) {
-//        if (boardingDto.getCity() == null || boardingDto.getCity().getId() == null) {
-//            throw new RuntimeException("City information is missing in the request.");
-//        }
+    public void createAndUpdateBoarding(BoardingPointsDto boardingDto) {
 
         City city = cityRepository.findById(boardingDto.getCityId())
                 .orElseThrow(() -> new RuntimeException("City not found"));
@@ -50,6 +47,7 @@ public class BoardingService {
     }
 
     public void deleteBoardingPoint(Integer id) {
-
+        BoardingPoints existingPoint=boardingRepository.findById(id).orElseThrow(()->new RuntimeException("Boarding point does not found "));
+        boardingRepository.delete(existingPoint);
     }
 }

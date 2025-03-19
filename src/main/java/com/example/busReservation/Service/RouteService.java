@@ -1,24 +1,16 @@
 package com.example.busReservation.Service;
 
-import com.example.busReservation.Dto.PickUpPointRequestDto;
-import com.example.busReservation.Dto.PickUpPointsDto;
-import com.example.busReservation.Dto.RouteDTo;
-import com.example.busReservation.Dto.RouteVariantDto;
-import com.example.busReservation.Entity.City;
-import com.example.busReservation.Entity.PickUpPoints;
-import com.example.busReservation.Entity.Route;
-import com.example.busReservation.Entity.RouteVariant;
+import com.example.busReservation.Dto.*;
+import com.example.busReservation.Entity.*;
 import com.example.busReservation.Enum.Status;
-import com.example.busReservation.Repository.CityRepository;
-import com.example.busReservation.Repository.PickUpPointsRepository;
-import com.example.busReservation.Repository.RouteRepository;
-import com.example.busReservation.Repository.RouteVariantRepository;
+import com.example.busReservation.Repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Data
@@ -28,15 +20,17 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final CityRepository cityRepository;
     private final RouteVariantRepository routeVariantRepository;
-    private final PickUpPointsRepository pickUpPointsRepository;
+    private final BoardingRepository boardingPointsRepository;
+    private final BusRouteRepository busRouteRepository;
+    private final BoardingPointTimeRepository boardingPointTimeRepository;
 
     private RouteDTo entityToDto(Route route) {
-        return RouteDTo.builder().id(route.getId())
-
+        return RouteDTo.builder()
+                .id(route.getId())
                 .sourceCity(route.getSourceCity())
                 .destinationCity(route.getDestinationCity())
                 .distanceKm(route.getDistanceKm())
-                .status(route.getStatus().name()).build();
+                .status(route.getStatus().toString()).build();
     }
 
     public void saveAndUpdateRoutes(RouteDTo routeDTo) {
@@ -60,8 +54,8 @@ public class RouteService {
     }
 
     public RouteDTo getRouteById(Integer id) {
-        Optional<Route> route = routeRepository.findByRouteId(id);
-        return route.map(this::entityToDto).orElse(null);
+        Optional<Route> route = routeRepository.findById(id);
+        return this.entityToDto(route.get());
     }
 
     public void deleteById(Integer id) {
@@ -70,53 +64,110 @@ public class RouteService {
     }
 
 
-    public void createAndUpdateRouteVariant(RouteVariantDto variantDto) {
-        Route route = routeRepository.findById(variantDto.getRoute().getId()).orElseThrow(() -> new RuntimeException("route not found "));
-        RouteVariant routeVariant = RouteVariant.builder().variantName(variantDto.getVariantName())
-                .route(route).build();
+    public void createAndUpdateRouteVariant(RouteVariantDto2 variantDto) {
+        Route route = routeRepository.findById(variantDto.getRoute().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Route not found"));
+
+        RouteVariant routeVariant = RouteVariant.builder()
+                .variantName(variantDto.getVariantName())
+                .route(route)
+                .build();
+
         if (variantDto.getId() != null) {
-            routeVariantRepository.findById(variantDto.getId()).orElseThrow(() -> new RuntimeException("variantID not found"));
+            routeVariantRepository.findById(variantDto.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Variant ID not found"));
             routeVariant.setId(variantDto.getId());
         }
+
         routeVariantRepository.save(routeVariant);
     }
 
-    public void createAndUpdatePickUpPoints(PickUpPointsDto pickUpPointsDto) {
-        RouteVariant routeVariant = routeVariantRepository.findById(pickUpPointsDto.getRouteVariantId())
-                .orElseThrow(() -> new RuntimeException("Route Variant not found"));
+    public void createAndUpdateBusRoutes(RouteVariantDto routeVariantDto) {
+        if (routeVariantDto.getBusRoutesDto() == null || routeVariantDto.getBusRoutesDto().isEmpty()) {
+            throw new IllegalArgumentException("Bus routes data is required.");
+        }
 
-        List<PickUpPoints> pickupPointsList = pickUpPointsDto.getPickUpPoints().stream().map(pickUpPointRequest -> {
-            City city = cityRepository.findById(pickUpPointRequest.getCityId())
-                    .orElseThrow(() -> new RuntimeException("City not found"));
+        RouteVariant routeVariant = routeVariantRepository.findById(routeVariantDto.getRouteVariantId())
+                .orElseThrow(() -> new RuntimeException("Route variant not found"));
 
-            return PickUpPoints.builder()
-                    .city(city)
+        // Collect all unique city IDs
+        Set<Integer> cityIds = routeVariantDto.getBusRoutesDto().stream()
+                .map(BusRouteDto::getCityId)
+                .collect(Collectors.toSet());
+
+        // Fetch all required cities in one query and store in a map
+        Map<Integer, City> cityMap = cityRepository.findAllById(cityIds).stream()
+                .collect(Collectors.toMap(City::getId, city -> city));
+
+        // Build BusRoutes efficiently using a sorted structure (TreeMap for auto-sorting)
+        TreeMap<Integer, BusRoutes> busRoutesMap = new TreeMap<>();
+
+        for (BusRouteDto busRouteDto : routeVariantDto.getBusRoutesDto()) {
+            City city = cityMap.get(busRouteDto.getCityId());
+            if (city == null) {
+                throw new RuntimeException("City not found for ID: " + busRouteDto.getCityId());
+            }
+
+            BusRoutes busRoute = BusRoutes.builder()
                     .routeVariant(routeVariant)
-                    .stopOrder(pickUpPointRequest.getStopOrder())
-                    .fare(pickUpPointRequest.getFare())
+                    .city(city)
+                    .stopOrder(busRouteDto.getStopOrder())
+                    .fare(busRouteDto.getFare())
                     .build();
-        }).toList();
 
-        pickUpPointsRepository.saveAll(pickupPointsList);
+            busRoutesMap.put(busRouteDto.getStopOrder(), busRoute);
+        }
+
+        List<BusRoutes> busRoutes = new ArrayList<>(busRoutesMap.values());
+        busRouteRepository.saveAll(busRoutes);
+
+        // Fetch all required boarding points in one batch
+        Set<Integer> boardingPointIds = routeVariantDto.getBusRoutesDto().stream()
+                .flatMap(busRouteDto -> busRouteDto.getBoardingPointTimeDto().stream())
+                .map(BoardingPointTimeDto::getBoardingPointId)
+                .collect(Collectors.toSet());
+
+        Map<Integer, BoardingPoints> boardingPointsMap = boardingPointsRepository.findAllById(boardingPointIds).stream()
+                .collect(Collectors.toMap(BoardingPoints::getId, bp -> bp));
+
+        // Set the first boarding time
+        LocalTime lastBoardingTime = routeVariantDto.getStartBoardingTime() != null
+                ? LocalTime.parse(routeVariantDto.getStartBoardingTime()) : null;
+
+        List<BoardingPointTime> allBoardingPointTimes = new ArrayList<>();
+
+        for (BusRoutes busRoute : busRoutes) {
+            BusRouteDto currentBusRouteDto = routeVariantDto.getBusRoutesDto().stream()
+                    .filter(r -> r.getCityId().equals(busRoute.getCity().getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("No boarding points found for city ID: " + busRoute.getCity().getId()));
+
+            for (BoardingPointTimeDto boardingPointTimeDto : currentBusRouteDto.getBoardingPointTimeDto()) {
+                BoardingPoints boardingPoint = boardingPointsMap.get(boardingPointTimeDto.getBoardingPointId());
+                if (boardingPoint == null) {
+                    throw new RuntimeException("Boarding Point not found for ID: " + boardingPointTimeDto.getBoardingPointId());
+                }
+                lastBoardingTime = incrementBoardingTime(lastBoardingTime, boardingPointTimeDto.getTimeInterval());
+                BoardingPointTime boardingPointTime = BoardingPointTime.builder()
+                        .busRoute(busRoute)
+                        .boardingPoint(boardingPoint)
+                        .boardingTime(lastBoardingTime)
+                        .build();
+                allBoardingPointTimes.add(boardingPointTime);
+
+                // Update the last boarding time
+              //  lastBoardingTime = incrementBoardingTime(lastBoardingTime, boardingPointTimeDto.getTimeInterval());
+            }
+        }
+
+        boardingPointTimeRepository.saveAll(allBoardingPointTimes);
     }
 
-
-    public List<PickUpPointsDto> getPickupPointsForRouteVariant(Integer routeVariantId) {
-        List<PickUpPoints> pickupPoints = pickUpPointsRepository.findByRouteVariantIdOrderByStopOrder(routeVariantId);
-        return pickupPoints.stream()
- .collect(Collectors.groupingBy(pickUpPoint -> pickUpPoint.getRouteVariant().getId()))
-                .entrySet().stream()
-                .map(entry -> PickUpPointsDto.builder()
-                        .routeVariantId(entry.getKey())
-                        .pickUpPoints(entry.getValue().stream()
-                                .map(pickUpPoint -> PickUpPointRequestDto.builder()
-                                        .cityId(pickUpPoint.getCity().getId())
-                                        .stopOrder(pickUpPoint.getStopOrder())
-                                        .fare(pickUpPoint.getFare())
-                                        .build())
-                                .collect(Collectors.toList()))
-                        .build())
-                .collect(Collectors.toList());
-
+    private LocalTime incrementBoardingTime(LocalTime currentBoardingTime, Integer timeInterval) {
+        if (currentBoardingTime == null) {
+            throw new IllegalArgumentException("Current boarding time cannot be null");
+        }
+        return currentBoardingTime.plusMinutes(Optional.ofNullable(timeInterval).orElse(0));
     }
+
 }
