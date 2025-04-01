@@ -28,10 +28,8 @@ public class BusSchedules {
     @Column(name = "arrival_time")
     private LocalTime arrivalTime;
 
-    @ElementCollection
-    @CollectionTable(name = "bus_travel_dates", joinColumns = @JoinColumn(name = "schedule_id"))
-    @Column(name = "travel_date")
-    private Set<LocalDate> travelDates;
+    @OneToMany(mappedBy = "busSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BusTravelDate> travelDates;
 
     @Column(name = "total_traveling_hours")
     private Double travelTime;
@@ -40,10 +38,14 @@ public class BusSchedules {
     @JoinColumn(name = "bus_id")
     private BusDetails busDetails;
 
-
     @ManyToOne
     @JoinColumn(name ="route_id")
     private Route route;
+
+    @ManyToOne
+    @JoinColumn(name = "variant_id")
+    private  RouteVariant routeVariant;
+
 }
 
 

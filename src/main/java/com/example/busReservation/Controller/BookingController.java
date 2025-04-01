@@ -1,31 +1,36 @@
 package com.example.busReservation.Controller;
 
-import com.example.busReservation.Dto.BookingDto;
-import com.example.busReservation.Dto.BusSearchDto;
-import com.example.busReservation.Entity.Booking;
-import com.example.busReservation.Entity.BusSchedules;
+import com.example.busReservation.Dto.BookingRequestDto;
 import com.example.busReservation.Service.BookingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/booking")
 public class BookingController {
-   private final BookingService bookingService;
+    private final BookingService bookingService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createBooking(@RequestBody BookingDto bookingDto) {
+    @PostMapping("/book")
+    public ResponseEntity<?> bookSeat(@RequestBody BookingRequestDto bookingRequest) {
         try {
-            Booking booking = bookingService.createBooking(bookingDto);
-            return ResponseEntity.ok(booking);
+            String response = bookingService.bookSeat(bookingRequest);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PutMapping("/cancel/{bookingId}")
+    public ResponseEntity<?> cancelSeat(@PathVariable Integer bookingId) {
+        try {
+            String response = bookingService.cancelBooking(bookingId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
 }
+
+

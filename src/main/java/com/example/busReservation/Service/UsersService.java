@@ -20,7 +20,7 @@ public class UsersService {
     @Transactional
     public void saveUsersDetails(UserDto usersDto) {
 
-        List<UsersBean> duplicateUsers = userRepository.findUsersDetails(
+        List<UsersBean> duplicateUsers = userRepository.findUsersDetails(usersDto.getId(),
                 usersDto.getAdharId(), usersDto.getEmail(), usersDto.getPhone());
 
         if (!duplicateUsers.isEmpty()) {
@@ -37,10 +37,12 @@ public class UsersService {
                 .country(usersDto.getCountry())
                 .status(Status.valueOf(usersDto.getStatus()))
                 .build();
-        if(usersDto.getId() != null){
-            userRepository.findByUserId(usersDto.getId()).orElseThrow(()->new RuntimeException("user id not found"));
-            userDetails.setId(userDetails.getId());
+        if(usersDto.getId() != null) {
+            userRepository.findById(usersDto.getId())
+                    .orElseThrow(() -> new RuntimeException("user id not found"));
+            userDetails.setId(usersDto.getId());
         }
+
         userRepository.save(userDetails);
     }
 }

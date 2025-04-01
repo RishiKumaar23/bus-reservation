@@ -27,15 +27,23 @@ public class Booking {
     private UserDetails user;
 
     @ManyToOne
-    @JoinColumn(name = "schedule_id")
-    private BusSchedules busSchedule;
+    @JoinColumn(name = "bus_id")
+    private BusDetails busDetails;
 
     @ManyToOne
     @JoinColumn(name = "seat_id")
     private Seat seat;
 
+    @ManyToOne
+    @JoinColumn(name = "travel_date_id")
+    private BusTravelDate travelDate;
+
     @Column(name = "booking_date")
     private LocalDate bookingDate;
+
+    @ManyToOne
+    @JoinColumn(name = "boardingPoint_id")
+    private BoardingPoints boardingPoints;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

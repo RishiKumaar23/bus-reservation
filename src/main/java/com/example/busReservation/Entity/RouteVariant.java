@@ -17,9 +17,6 @@ public class RouteVariant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @Column(name = "start_boarding_time")
-//    private LocalTime startBoardingTime;
-
     @ManyToOne
     @JoinColumn(name = "route_id")
     private Route route;
@@ -29,5 +26,8 @@ public class RouteVariant {
 
     @Column(name = "variant_name")
     private String variantName;
+
+    @OneToMany(mappedBy = "routeVariant",cascade = CascadeType.ALL)
+    private List<BusSchedules> busSchedules;
 
 }

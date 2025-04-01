@@ -41,12 +41,14 @@ public class BusDetails {
     @JoinColumn(name = "owner_id")
     private BusOwner owner;
 
-    @OneToMany(mappedBy = "busDetails",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "busDetails", cascade = CascadeType.ALL)
     private List<Seat> seat;
 
-    @OneToMany(mappedBy = "busDetails",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "busDetails", cascade = CascadeType.ALL)
     private List<BusSchedules> busSchedules;
 
+    @OneToMany(mappedBy = "busDetails", cascade = CascadeType.ALL)
+    private List<Booking> bookings;
 
 }
 

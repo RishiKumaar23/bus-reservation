@@ -1,6 +1,8 @@
 package com.example.busReservation.Bean;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 public interface BusSearchBean {
     Integer getId();
@@ -15,8 +17,16 @@ public interface BusSearchBean {
 
     Integer getRouteId();
 
+    Integer getAvailableSeats();
 
+    String getSeatIds();
 
- //   Set<LocalDate> getTravelDates();
+    String getSeatNames();
+
+    LocalDate getTravelDate();
+
+    String getAvailableSeatIds();
+
+    String getAvailableSeatNames();
 
 }

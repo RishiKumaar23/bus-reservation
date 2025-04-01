@@ -1,14 +1,10 @@
 package com.example.busReservation.Service;
 
-import com.example.busReservation.Dto.BookingDto;
-import com.example.busReservation.Entity.Booking;
-import com.example.busReservation.Entity.BusSchedules;
-import com.example.busReservation.Entity.Seat;
-import com.example.busReservation.Entity.UserDetails;
-import com.example.busReservation.Repository.BookingRepository;
-import com.example.busReservation.Repository.BusScheduleRepository;
-import com.example.busReservation.Repository.SeatRepository;
-import com.example.busReservation.Repository.UserRepository;
+import com.example.busReservation.Dto.BookingRequestDto;
+import com.example.busReservation.Entity.*;
+import com.example.busReservation.Enum.BookingStatus;
+import com.example.busReservation.Repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,33 +14,63 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class BookingService {
     private final SeatRepository seatRepository;
-    private final UserRepository userRepository;
-    private final BusScheduleRepository busScheduleRepository;
+    private final UserRepository userDetailsRepository;
+    private final BusDetailsRepository busDetailsRepository;
     private final BookingRepository bookingRepository;
-    public Booking createBooking(BookingDto bookingDto) {
+    private final BoardingRepository boardingRepository;
+    private final BusTravelDateRepository busTravelDateRepository;
 
-        UserDetails user = userRepository.findById(bookingDto.getUser().getId())
-                .orElseThrow(() -> new RuntimeException("User  not found"));
 
-        BusSchedules busSchedule = busScheduleRepository.findById(bookingDto.getBusSchedule().getId())
-                .orElseThrow(() -> new RuntimeException("Bus schedule not found"));
+    @Transactional
+    public String bookSeat(BookingRequestDto bookingRequest) {
+        UserDetails user = userDetailsRepository.findById(bookingRequest.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found "));
 
-        Seat seat = seatRepository.findById(bookingDto.getSeat().getId()).orElseThrow(() -> new RuntimeException("Seat not found"));
-        if (seat.getIsBooked()) {
-            throw new RuntimeException("Seat is already booked");
+        BusDetails busDetails = busDetailsRepository.findById(bookingRequest.getBusId())
+                .orElseThrow(() -> new IllegalArgumentException("Bus not found"));
+
+        Seat seat = seatRepository.findById(bookingRequest.getSeatId())
+                .orElseThrow(() -> new IllegalArgumentException("Seat not found "));
+
+        BusTravelDate busTravelDate = busTravelDateRepository.findById(bookingRequest.getTravelDateId())
+                .orElseThrow(() -> new IllegalArgumentException("No schedule found for travel date"));
+
+        boolean seatAlreadyBooked = bookingRepository.countBookingsBySeatAndBusAndDate(
+                bookingRequest.getSeatId(),
+                bookingRequest.getBusId(),
+                bookingRequest.getTravelDateId(),bookingRequest.getStatus()
+        ) > 0;
+
+        if (seatAlreadyBooked) {
+            throw new IllegalStateException("Seat ID " + bookingRequest.getSeatId() + " is already booked for this date.");
         }
+
+        BoardingPoints boardingPoint = boardingRepository.findById(bookingRequest.getBoardingPointId())
+                .orElseThrow(() -> new IllegalArgumentException("Boarding point not found with ID: " + bookingRequest.getBoardingPointId()));
+
         Booking booking = Booking.builder()
-                .busSchedule(busSchedule)
+                .user(user)
+                .busDetails(busDetails)
                 .seat(seat)
+                .travelDate(busTravelDate)
                 .bookingDate(LocalDate.now())
+                .boardingPoints(boardingPoint)
+                .status(bookingRequest.getStatus() != null ? bookingRequest.getStatus() : BookingStatus.BOOKED)
                 .build();
-        seat.setIsBooked(true);
-        seat.setBooking(booking);
+
         bookingRepository.save(booking);
-        seatRepository.save(seat);
-
-        return booking;
+        return "Seat booked successfully for travel date ID: " + bookingRequest.getTravelDateId();
     }
 
 
+    @Transactional
+    public String cancelBooking(Integer bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        bookingRepository.save(booking);
+
+        return "Booking cancelled successfully.";
     }
+}

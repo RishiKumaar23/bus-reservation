@@ -1,7 +1,6 @@
 package com.example.busReservation.Controller;
 
 import com.example.busReservation.Dto.RouteDTo;
-import com.example.busReservation.Dto.RouteVariantDto;
 import com.example.busReservation.Dto.RouteVariantDto2;
 import com.example.busReservation.Service.RouteService;
 import lombok.Data;
@@ -71,15 +70,15 @@ public class RouteController {
         }
     }
 
-    @PutMapping(value = "pickUp/dropping/Points/save",consumes = "application/json")
-    private ResponseEntity<?> createAndUpdatePickANdDroppingPoints(@RequestBody RouteVariantDto routeVariantDto) {
-        try {
-            routeService.createAndUpdateBusRoutes(routeVariantDto);
-            return ResponseEntity.ok("Pickup Points Saved Successfully");
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PutMapping(value = "pickUp/dropping/Points/save",consumes = "application/json")
+//    private ResponseEntity<?> createAndUpdatePickANdDroppingPoints(@RequestBody RouteVariantDto routeVariantDto) {
+//        try {
+//            routeService.createAndUpdateBusRoutes(routeVariantDto);
+//            return ResponseEntity.ok("Pickup Points Saved Successfully");
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
 }
 

@@ -16,13 +16,23 @@ public class SeatController {
     @PutMapping("/save")
     private ResponseEntity<?> createAndUpdateSeats(@RequestBody SeatDto seatDto) {
         try {
-            seatService.createAndUpdateSeats(seatDto);
-            String message = (seatDto.getId() != null) ? "bus seat details updated" : "Bus Seat details created";
-            return ResponseEntity.ok(message);
+            seatService.createSeats(seatDto);
+
+            return ResponseEntity.ok("seat categories created successfully");
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+    @PutMapping("/update-category")
+    public ResponseEntity<?> updateSeatCategories(@RequestBody SeatDto seatDto) {
+        try {
+            seatService.updateSeatCategories(seatDto);
+            return ResponseEntity.ok("Seat categories updated successfully");
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
 }

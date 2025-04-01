@@ -14,8 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RouteVariantDto {
     private Integer routeVariantId;
-    private String startBoardingTime;
-    private List<BusRouteDto> busRoutesDto;
+
 
 //    public class BusRouteDto {
 //        private Integer cityId;

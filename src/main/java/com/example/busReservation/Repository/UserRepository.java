@@ -10,8 +10,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserDetails, Integer> {
-    @Query(value = "select * from user_details where (:id is null or id!=:id) And (adharId=:adharId or email=:email or phone=:phone", nativeQuery = true)
-    List<UsersBean> findUsersDetails(@Param("adharId") Long adharId, @Param("email") String email, @Param("phone") String phone);
-    @Query(value = "select * from user_details where id=:id ",nativeQuery = true)
-    Optional<UserDetails> findByUserId(@Param("id") Integer userId);
+    @Query(value = "SELECT * FROM passenger_details " +
+            "WHERE (:id IS NULL OR id != :id) " +
+            "AND (adhar_id = :adharId OR email = :email OR phone = :phone)",
+            nativeQuery = true)
+    List<UsersBean> findUsersDetails(@Param("id") Integer id,
+                                     @Param("adharId") Long adharId,
+                                     @Param("email") String email,
+                                     @Param("phone") String phone);
+
+//    @Query(value = "select * from passenger_details where id=:id ",nativeQuery = true)
+//    Optional<UserDetails> findByUserId(@Param("id") Integer userId);
 }

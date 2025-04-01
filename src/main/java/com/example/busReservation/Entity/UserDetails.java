@@ -37,7 +37,7 @@ public class UserDetails {
     @Column(name = "email", length = 50)
     private String email;
 
-    @Column(name = "phone", length = 15, unique = true)
+    @Column(name = "phone",  unique = true)
     private String phone;
 
     @Column(name = "nationality", length = 30)

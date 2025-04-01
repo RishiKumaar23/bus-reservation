@@ -22,7 +22,7 @@ public class BusDetailsService {
                 .id(busDetails.getId())
                 .busRegNo(busDetails.getBusRegNo())
                 .busType(busDetails.getBusType().name())
-                .seatType(busDetails.getSeatType().name())
+                .seatType(String.valueOf(busDetails.getSeatType()))
                 .owner(busDetails.getOwner())
                 .build();
     }

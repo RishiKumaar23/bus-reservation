@@ -1,13 +1,12 @@
 package com.example.busReservation.Entity;
 
+import com.example.busReservation.Enum.SeatCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,32 +21,18 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ElementCollection
-    @CollectionTable(name = "window_seats", joinColumns = @JoinColumn(name = "seat_id"))
-    @Column(name = "window_seat_name")
-    private Set<String> windowSeats;
+    @Column(name = "seat_name",unique = true)
+    private String seatName;
 
-    @ElementCollection
-    @CollectionTable(name = "other_seats", joinColumns = @JoinColumn(name = "seat_id"))
-    @Column(name = "other_seat_name")
-    private Set<String> otherSeats;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "seat_category")
+    private SeatCategory seatCategory;
 
-    @Column(name = "seat_capacity")
-    private Integer seatCapacity;
 
     @ManyToOne
     @JoinColumn(name = "bus_id")
     private BusDetails busDetails;
 
-    @Column(name = "fare")
-    @Min(value = 0, message = "Fare must be at least 0")
-    private BigDecimal fare;
-
     @OneToOne(mappedBy = "seat")
     private Booking booking;
-
-    @Builder.Default
-    @Column(name = "is_booked")
-    private Boolean isBooked = false;
-
 }

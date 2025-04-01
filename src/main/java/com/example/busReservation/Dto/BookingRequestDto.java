@@ -13,12 +13,12 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class BookingDto {
-    private Integer id;
-    private UserDetails user;
-    private BusSchedules busSchedule;
-    private Seat seat;
-    private LocalDate bookingDate;
-    private BookingStatus status = BookingStatus.BOOKED;
+public class BookingRequestDto {
+    private Integer userId;
+    private Integer seatId;
+    private Integer busId;
+    private Integer travelDateId;
+    private Integer boardingPointId;
+    private BookingStatus status;
 
 }
